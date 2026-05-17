@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:docs.rs)",
+      "Bash(cargo check *)",
+      "Bash(npm run *)",
+      "Bash(npm install *)",
+      "Bash(npx vue-tsc *)",
+      "Bash(npx vite *)"
+    ]
+  }
+}
