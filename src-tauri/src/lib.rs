@@ -364,9 +364,31 @@ struct FilterPreset {
 }
 
 #[derive(Serialize, Deserialize, Clone)]
+struct ViewerSettings {
+    #[serde(default = "default_viewer_backdrop_mode")]
+    backdrop_mode: String,
+    #[serde(default = "default_viewer_backdrop_color")]
+    backdrop_color: String,
+}
+
+fn default_viewer_backdrop_mode() -> String { "gray".to_string() }
+fn default_viewer_backdrop_color() -> String { "#808080".to_string() }
+
+impl Default for ViewerSettings {
+    fn default() -> Self {
+        Self {
+            backdrop_mode: default_viewer_backdrop_mode(),
+            backdrop_color: default_viewer_backdrop_color(),
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Clone)]
 struct AppSettings {
     #[serde(default)]
     grid: GridSettings,
+    #[serde(default)]
+    viewer: ViewerSettings,
     #[serde(default)]
     filter_presets: Vec<FilterPreset>,
     #[serde(default)]
@@ -377,6 +399,7 @@ impl Default for AppSettings {
     fn default() -> Self {
         Self {
             grid: GridSettings::default(),
+            viewer: ViewerSettings::default(),
             filter_presets: Vec::new(),
             external_programs: Vec::new(),
         }

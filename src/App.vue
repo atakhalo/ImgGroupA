@@ -59,6 +59,10 @@ interface GridSettings {
   group_bg: string;
 }
 
+interface ViewerSettings {
+  backdrop_mode: string; // 'gray' | 'color'
+  backdrop_color: string;
+}
 
 interface ExternalProgram {
   name: string;
@@ -73,6 +77,7 @@ interface FilterPreset {
 
 interface AppSettings {
   grid: GridSettings;
+  viewer: ViewerSettings;
   filter_presets: FilterPreset[];
   external_programs: ExternalProgram[];
 }
@@ -800,6 +805,13 @@ const viewerDisplayPercent = computed(() => {
   return Math.round(base * viewerZoom.value * 100);
 });
 
+const viewerBackdropStyle = computed(() => {
+  if (appSettings.value.viewer.backdrop_mode === "color") {
+    return { background: appSettings.value.viewer.backdrop_color };
+  }
+  return { background: "rgba(0, 0, 0, 0.85)" };
+});
+
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
@@ -1098,13 +1110,17 @@ function groupMetadata() {
 
 // ---- Settings ----
 const settingsOpen = ref(false);
-const settingsTab = ref<"grid" | "presets" | "programs">("grid");
+const settingsTab = ref<"grid" | "viewer" | "presets" | "programs">("grid");
 const appSettings = ref<AppSettings>({
   grid: {
     border_radius: 8, gap: 12, min_width: 200, background_color: "#0f1a30",
     root_title_color: "#cccccc", root_title_bg: "#1a2a4a",
     child_title_color: "#cccccc", child_title_bg: "#141e33",
     group_bg: "#141e33",
+  },
+  viewer: {
+    backdrop_mode: "gray",
+    backdrop_color: "#808080",
   },
   filter_presets: [],
   external_programs: [],
@@ -1441,7 +1457,7 @@ onUnmounted(() => {
 
     <!-- ===== 图片大图查看器 ===== -->
     <div v-if="viewerOpen" class="viewer-overlay" @wheel="onViewerWheel">
-      <div class="viewer-backdrop"></div>
+      <div class="viewer-backdrop" :style="viewerBackdropStyle"></div>
 
       <div
         class="viewer-image-center"
@@ -1603,6 +1619,11 @@ onUnmounted(() => {
           >{{ $t('settings.gridStyle') }}</button>
           <button
             class="settings-tab"
+            :class="{ 'tab-active': settingsTab === 'viewer' }"
+            @click="settingsTab = 'viewer'"
+          >{{ $t('settings.viewer') }}</button>
+          <button
+            class="settings-tab"
             :class="{ 'tab-active': settingsTab === 'presets' }"
             @click="settingsTab = 'presets'"
           >{{ $t('settings.filterPresets') }}</button>
@@ -1662,6 +1683,21 @@ onUnmounted(() => {
               <span>{{ $t('settings.bgColor') }}</span>
               <input type="color" v-model="appSettings.grid.group_bg" />
               <span class="setting-val" style="font-family:monospace">{{ appSettings.grid.group_bg }}</span>
+            </label>
+          </div>
+          <!-- 查看器设置 -->
+          <div v-if="settingsTab === 'viewer'" class="settings-form">
+            <label class="setting-row">
+              <span>{{ $t('settings.viewerBackdropMode') }}</span>
+              <select v-model="appSettings.viewer.backdrop_mode" class="mode-select" style="flex:1">
+                <option value="gray">{{ $t('settings.viewerBackdropGray') }}</option>
+                <option value="color">{{ $t('settings.viewerBackdropColor') }}</option>
+              </select>
+            </label>
+            <label class="setting-row">
+              <span>{{ $t('settings.viewerBackdropColorLabel') }}</span>
+              <input type="color" v-model="appSettings.viewer.backdrop_color" />
+              <span class="setting-val" style="font-family:monospace">{{ appSettings.viewer.backdrop_color }}</span>
             </label>
           </div>
           <!-- 筛选预设 -->
