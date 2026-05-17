@@ -1,6 +1,10 @@
 # 格图A - 图片分组浏览器
 
-基于 Tauri 2 + Vue 3 + TypeScript 的桌面图片查看器应用。
+<img src="DocImage/mainView.webp" height ="150">
+
+<img src="DocImage/bigView.webp" height ="150">
+
+<img src="DocImage/compare.webp" height ="150">
 
 # 核心功能
 分组网格视图：
@@ -10,6 +14,7 @@
 # 其他功能
 对比功能
 1. 可选择两张图片进行对比
+
 筛选功能
 1. 可按文件名、分组、路径 进行筛选；
 2. 可保存为预设
